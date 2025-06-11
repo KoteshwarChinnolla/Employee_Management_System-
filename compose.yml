@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # db:
+  #   image: postgres:17
+  #   container_name: emspostgre
+  #   restart: always
+  #   environment:
+  #     POSTGRES_DB: spring
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: koti21
+  #   volumes:
+  #     - ./pgdata:/var/lib/postgresql/data
+  #     - ./initdb:/docker-entrypoint-initdb.d
+  #   ports:
+  #     - "5432:5432"
+  #   networks:
+  #     - spring_network
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U postgres"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+  employeeapp:
+    image: ems/employee
+    build:
+      context: ./springPostgress
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://ems.c3ykgskuuzr8.ap-south-1.rds.amazonaws.com:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ChinnollA21
+    networks:
+      - spring_network
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
+
+  adminapp:
+    image: ems/admin
+    build:
+      context: ./Admin
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://ems.c3ykgskuuzr8.ap-south-1.rds.amazonaws.com:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ChinnollA21
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
+    networks:
+      - spring_network
+
+  authenticationapp:
+    image: ems/auth
+    build:
+      context: ./Authentication
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://ems.c3ykgskuuzr8.ap-south-1.rds.amazonaws.com:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ChinnollA21
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
+    networks:
+      - spring_network
+
+  # gateway:
+  #   build: .
+    
+  #   ports:
+  #     - "80:80"
+
+  #   depends_on:
+  #     - employeeapp
+  #     - adminapp
+  #     - authenticationapp
+
+  #   networks:
+  #     - spring_network
+
+
+networks:
+  spring_network:
+    driver: bridge
+

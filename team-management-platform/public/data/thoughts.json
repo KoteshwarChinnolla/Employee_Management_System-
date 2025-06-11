@@ -1,0 +1,22 @@
+{
+    "thoughts": [
+        {
+            "id": 1,
+            "date": "2024-03-20",
+            "content": "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+            "author": "Winston Churchill"
+        },
+        {
+            "id": 2,
+            "date": "2024-03-21",
+            "content": "The only way to do great work is to love what you do.",
+            "author": "Steve Jobs"
+        },
+        {
+            "id": 3,
+            "date": "2024-03-22",
+            "content": "Innovation distinguishes between a leader and a follower.",
+            "author": "Steve Jobs"
+        }
+    ]
+} 

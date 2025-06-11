@@ -1,0 +1,34 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-AdminApplication<Admin>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "ems.service.Admin.AdminApplication",
+            "projectName": "Admin",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-AuthenticationApplication<Authentication>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "koti.auth.Authentication.AuthenticationApplication",
+            "projectName": "Authentication",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-SpringPostgressApplication<springPostgress>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "koti.ems.springPostgress.SpringPostgressApplication",
+            "projectName": "springPostgress",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
