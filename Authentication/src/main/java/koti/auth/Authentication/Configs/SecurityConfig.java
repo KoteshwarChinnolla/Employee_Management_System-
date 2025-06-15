@@ -1,5 +1,6 @@
 package koti.auth.Authentication.Configs;
 
+// import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+// import org.springframework.web.client.RestClient;
 import org.springframework.web.cors.CorsConfiguration;
 
 // import io.jsonwebtoken.lang.Arrays; // Removed incorrect import
@@ -37,6 +39,7 @@ public class SecurityConfig {
         this.jwtUtil = jwtUtil;
         this.registrationService = registrationService;
     }
+
 
    @Bean
     public JWTAuthenticationProvider jwtAuthenticationProvider() {

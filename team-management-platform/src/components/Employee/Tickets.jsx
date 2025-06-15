@@ -339,6 +339,7 @@ const Tickets = () => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [employeeName, setEmployeeName] = useState('');
+  const [employeeId, setEmployeeId] = useState(null); // <-- Add this line
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({
     ticketName: '',
@@ -364,6 +365,7 @@ const Tickets = () => {
     if (payload?.username) {
       const name = payload.username.replace(/_/g, ' ').replace(/ /g, '-');
       setEmployeeName(payload.username.replace(/_/g, ' '));
+      setEmployeeId(payload.employeeId); // <-- Add this line
       fetch(`${API_BASE_URLS.EMPLOYEE}/employee/getTicketByNameAll/${encodeURIComponent(name)}`)
         .then(res => res.json())
         .then(data => {
@@ -403,6 +405,7 @@ const Tickets = () => {
     setSubmitting(true);
     const payload = {
       employeeName,
+      employeeId, // <-- Add this line
       ticketName: form.ticketName,
       ticketDescription: form.ticketDescription,
       ticketStatus: form.ticketStatus,

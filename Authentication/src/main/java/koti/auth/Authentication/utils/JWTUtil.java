@@ -7,9 +7,11 @@ import io.jsonwebtoken.security.Keys;
 import koti.auth.Authentication.AuthEntitys.RegistrationEntity;
 import koti.auth.Authentication.AuthService.RegistrationService;
 
+// import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -23,14 +25,31 @@ public class JWTUtil {
     private static final String SECRET_KEY = "JWT_FOR_EMPLOYEE_MANAGEMENT_SYSTEM_!@#$%^&*()";
     private static final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
+    private RegistrationService registrationService;
+    private RestClient restClient;
+
     @Autowired
-    RegistrationService registrationService;
+    public JWTUtil(RegistrationService registrationService, RestClient restClient) {
+        this.registrationService = registrationService;
+        this.restClient = restClient;
+    }
+
+    
     // Generate JWT Token
     public String generateToken(String username, long expiryMinutes) {
         RegistrationEntity payload = registrationService.findByUsername(username);
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", payload.getUsername());
         claims.put("role",payload.getRole());
+
+        Long employeeId = restClient
+                .get()
+                .uri("http://localhost:8080/employee/employee/getEmployeeId/" + username)
+                .retrieve()
+                .body(Long.class);
+
+        claims.put("employeeId", employeeId);
+        
         return Jwts.builder()
                 .setSubject(username)
                 .setClaims(claims)

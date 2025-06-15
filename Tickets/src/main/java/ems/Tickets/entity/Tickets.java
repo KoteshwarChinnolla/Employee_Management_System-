@@ -1,7 +1,7 @@
-package ems.service.Admin.entity;
+package ems.Tickets.entity;
 import lombok.*;
 import jakarta.persistence.*;
-import ems.service.Admin.dto.TicketsDto;
+import ems.Tickets.dto.TicketsDto;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -22,11 +22,11 @@ public class Tickets {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "employee_id", referencedColumnName = "id")
-    @JsonBackReference
-    // @JoinColumn(name = "employee_id")
-    private Employee employee;
+    // @ManyToOne
+    // @JoinColumn(name = "employee_id", referencedColumnName = "id")
+    // @JsonBackReference
+    @Column(name = "employee_id")
+    private Long employee;
     @Column(name = "ticket_name")
     private String ticketName;
     @Column(name = "ticket_description")
@@ -44,7 +44,6 @@ public class Tickets {
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<conversationTickets> adminConversation = new ArrayList<>();
-
     @Transient
     public List<conversationTickets> sortConversationByData() {
         List<conversationTickets> conversionAll = new ArrayList<>();

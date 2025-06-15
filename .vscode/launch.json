@@ -29,6 +29,16 @@
             "projectName": "springPostgress",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-TicketsApplication<Tickets>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "ems.Tickets.TicketsApplication",
+            "projectName": "Tickets",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
