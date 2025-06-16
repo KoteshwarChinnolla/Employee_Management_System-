@@ -1,5 +1,8 @@
 package ems.service.Admin.entity;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
@@ -21,6 +24,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "achivements", schema = "ems")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "defaultCache")
 public class Achivements {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "achivement_seq1")

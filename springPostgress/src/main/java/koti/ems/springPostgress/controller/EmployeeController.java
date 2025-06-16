@@ -9,20 +9,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import koti.ems.springPostgress.dto.AddConvDto;
-import koti.ems.springPostgress.dto.AddTicketDto;
 import koti.ems.springPostgress.dto.EmployeeControllerDto;
 import koti.ems.springPostgress.dto.EmployeeDto;
 import koti.ems.springPostgress.dto.EmployeeDtoGen;
 import koti.ems.springPostgress.dto.TeamDto;
-import koti.ems.springPostgress.dto.TicketsDto;
 import koti.ems.springPostgress.entity.Achivements;
 import koti.ems.springPostgress.entity.Employee;
 import koti.ems.springPostgress.entity.Projects;
-import koti.ems.springPostgress.entity.Tickets;
 import koti.ems.springPostgress.service.EmployeeService;
 import koti.ems.springPostgress.service.EmployeeTeamService;
-import koti.ems.springPostgress.service.TicketsService;
 
 
 @RestController
@@ -35,8 +30,7 @@ public class EmployeeController {
     @Autowired
     EmployeeTeamService EmployeeTeamService;
 
-    @Autowired
-    TicketsService ticketService;
+
 
     @GetMapping("/getAll")
     public List<EmployeeDtoGen> getAll() {
@@ -143,56 +137,4 @@ public class EmployeeController {
         }
     }
 
-    @PostMapping("/addTicket")
-    public String addTicket(@RequestBody AddTicketDto entity) {
-    // {
-    //   "employeeName" : "Name",
-    //   "ticketName": "VPN Problem",
-    //   "ticketDescription": "VPN disconnects frequently.",
-    //   "ticketStatus": "In Progress",
-    //   "dateCreated": "2025-05-30",
-    //   "dataUpdated": "2025-06-01",
-    //   "empConversation": [
-    //     { "date": "2025-05-30", "message": "VPN is unstable.", "sender": "EMPLOYEE" }
-    //   ],
-    //   "adminConversation": [
-    //     { "date": "2025-06-01", "message": "Checking server logs.", "sender": "ADMIN" }
-    //   ]
-    // }
-        Employee employee = EmployeeService.getEmployeeByName(entity.getEmployeeName());
-        if (employee == null) {
-            throw new IllegalArgumentException("Employee with name " + entity.getEmployeeName() + " does not exist");
-        }
-        Tickets savedTicket = ticketService.saveTicket(entity, employee);
-        
-        return "Ticket saved with ID: " + savedTicket.getId();
-    }
-    @GetMapping("/getTicketByEnpName/{name}")
-    public List<Tickets> getTicketByEnpId(@PathVariable String name) {
-        name = name.replace("-", " ");
-        Long id = EmployeeService.getEmployeeByName(name).getId();
-        return ticketService.getTicketsByEmployee(id);
-    }
-
-    @GetMapping("/getTicketByNameAll/{name}")
-    public List<TicketsDto> getTicketByEnpIdAll(@PathVariable String name) {
-        name = name.replace("-", " ");
-        Long id = EmployeeService.getEmployeeByName(name).getId();
-        return ticketService.getTicketsByEmployee(id)
-                .stream()
-                .map(ticket -> ticket.toDto())
-                .toList();
-    }
-
-    @PostMapping("/addConversation")
-    public Tickets addConversation(@RequestBody AddConvDto convTickets) {
-    // {
-    //     "date": "2025-06-01",
-    //     "message": "WiFi disconnects often.",
-    //     "sender": "EMPLOYEE",
-    //     "ticket": 1
-    // }
-        System.out.println("Adding conversation to ticket with ID: " + convTickets.getTicket());
-        return ticketService.addConversation(convTickets);
-    }
 }

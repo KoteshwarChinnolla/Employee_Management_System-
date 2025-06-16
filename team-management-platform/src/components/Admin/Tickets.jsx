@@ -262,6 +262,12 @@ const Tickets = () => {
   const [resolving, setResolving] = useState({});
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [showChatMobile, setShowChatMobile] = useState(false);
+  const [editModal, setEditModal] = useState({ open: false, ticket: null });
+  const [editForm, setEditForm] = useState({
+    ticketName: '',
+    ticketDescription: '',
+    ticketStatus: 'Pending Approval'
+  });
   const chatBoxRef = useRef(null);
 
   const containerStyle = useResponsiveStyles({ container: styles.container });
@@ -273,7 +279,7 @@ const Tickets = () => {
     if (payload?.username) {
       setAdminName(payload.username.replace(/_/g, ' '));
     }
-    fetch(`${API_BASE_URLS.ADMIN}/ticket/getAllTickets`)
+    fetch(`${API_BASE_URLS.TICKET}/ticket/getAllTickets`)
       .then(res => res.json())
       .then(data => {
         setTickets(Array.isArray(data) ? data : []);
@@ -312,7 +318,7 @@ const Tickets = () => {
       sender: "ADMIN",
       ticket: ticketId
     };
-    await fetch(`${API_BASE_URLS.ADMIN}/ticket/addConversation`, {
+    await fetch(`${API_BASE_URLS.TICKET}/ticket/addConversation`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -324,13 +330,58 @@ const Tickets = () => {
   const handleResolveTicket = async (ticketId) => {
     setResolving(r => ({ ...r, [ticketId]: true }));
     await fetch(`${API_BASE_URLS.ADMIN}/ticket/updateStatus/${ticketId}`, {
-      method: 'PUT',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ticketStatus: 'Resolved', dateUpdated: todayDate() })
     });
     setResolving(r => ({ ...r, [ticketId]: false }));
     setLoading(true);
-    fetch(`${API_BASE_URLS.ADMIN}/ticket/getAllTickets`)
+    fetch(`${API_BASE_URLS.TICKET}/ticket/getAllTickets`)
+      .then(res => res.json())
+      .then(data => {
+        setTickets(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  };
+
+  const openEditModal = (ticket) => {
+    setEditForm({
+      ticketName: ticket.ticketName,
+      ticketDescription: ticket.ticketDescription,
+      ticketStatus: ticket.ticketStatus
+    });
+    setEditModal({ open: true, ticket });
+  };
+
+  const closeEditModal = () => {
+    setEditModal({ open: false, ticket: null });
+  };
+
+  const handleEditFormChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm(f => ({ ...f, [name]: value }));
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!editModal.ticket) return;
+    const updatedTicket = {
+      ticketId: editModal.ticket.ticketId,
+      ticketName: editForm.ticketName,
+      ticketDescription: editForm.ticketDescription,
+      ticketStatus: editForm.ticketStatus,
+      dateCreated: editModal.ticket.dateCreated,
+      dateUpdated: todayDate()
+    };
+    await fetch(`${API_BASE_URLS.TICKET}/ticket/editTicket`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedTicket)
+    });
+    closeEditModal();
+    setLoading(true);
+    fetch(`${API_BASE_URLS.TICKET}/ticket/getAllTickets`)
       .then(res => res.json())
       .then(data => {
         setTickets(Array.isArray(data) ? data : []);
@@ -355,6 +406,127 @@ const Tickets = () => {
 
   return (
     <div style={containerStyle.container}>
+      {/* Edit Modal */}
+      {editModal.open && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.18)',
+          zIndex: 2000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <form
+            onSubmit={handleEditSubmit}
+            style={{
+              background: COLORS.white,
+              borderRadius: 16,
+              boxShadow: `0 8px 32px ${COLORS.blue}33`,
+              padding: 32,
+              minWidth: 340,
+              maxWidth: 420,
+              width: '90%',
+              borderLeft: `6px solid ${COLORS.yellow}`,
+              position: 'relative'
+            }}
+          >
+            <div style={{marginBottom: 14}}>
+              <label style={{color: COLORS.blue, fontWeight: 600}}>Ticket Name</label>
+              <input
+                type="text"
+                name="ticketName"
+                value={editForm.ticketName}
+                onChange={handleEditFormChange}
+                required
+                style={{
+                  width: '100%',
+                  padding: 10,
+                  borderRadius: 8,
+                  border: `1.5px solid ${COLORS.gray}`,
+                  marginTop: 6,
+                  fontSize: 15
+                }}
+                autoFocus
+              />
+            </div>
+            <div style={{marginBottom: 14}}>
+              <label style={{color: COLORS.blue, fontWeight: 600}}>Ticket Description</label>
+              <textarea
+                name="ticketDescription"
+                value={editForm.ticketDescription}
+                onChange={handleEditFormChange}
+                required
+                style={{
+                  width: '100%',
+                  padding: 10,
+                  borderRadius: 8,
+                  border: `1.5px solid ${COLORS.gray}`,
+                  marginTop: 6,
+                  fontSize: 15,
+                  minHeight: 60,
+                  resize: 'vertical'
+                }}
+              />
+            </div>
+            <div style={{marginBottom: 14}}>
+              <label style={{color: COLORS.blue, fontWeight: 600}}>Status</label>
+              <select
+                name="ticketStatus"
+                value={editForm.ticketStatus}
+                onChange={handleEditFormChange}
+                style={{
+                  width: '100%',
+                  padding: 10,
+                  borderRadius: 8,
+                  border: `1.5px solid ${COLORS.gray}`,
+                  marginTop: 6,
+                  fontSize: 15
+                }}
+              >
+                <option>Pending Approval</option>
+                <option>In Progress</option>
+                <option>Resolved</option>
+              </select>
+            </div>
+            <div style={{textAlign: 'right'}}>
+              <button
+                type="submit"
+                style={{
+                  background: COLORS.yellow,
+                  color: COLORS.white,
+                  border: 'none',
+                  borderRadius: 8,
+                  padding: '10px 28px',
+                  fontWeight: 600,
+                  fontSize: 16,
+                  cursor: 'pointer',
+                  boxShadow: `0 2px 8px ${COLORS.yellow}22`,
+                  transition: 'background 0.2s'
+                }}
+              >
+                Save Changes
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={closeEditModal}
+              style={{
+                position: 'absolute',
+                top: 10,
+                right: 16,
+                background: 'none',
+                border: 'none',
+                color: COLORS.red,
+                fontSize: 22,
+                fontWeight: 700,
+                cursor: 'pointer'
+              }}
+              aria-label="Close"
+            >×</button>
+          </form>
+        </div>
+      )}
       {windowWidth <= 900 ? (
         showChatMobile && selectedTicket ? (
           <div style={{ ...mainPanelStyle.mainPanel, width: '100vw', height: '100vh', maxWidth: '100vw', padding: 0, position: 'relative', display: 'flex', flexDirection: 'column' }}>
@@ -485,10 +657,28 @@ const Tickets = () => {
                   ...(ticket.ticketId === selectedTicketId ? styles.ticketCardActive : {}),
                   margin: 12,
                   borderLeft: `6px solid ${COLORS.blue}`,
-                  borderRadius: 14
+                  borderRadius: 14,
+                  position: 'relative'
                 }}
                 onClick={() => handleTicketClick(ticket.ticketId)}
               >
+                {/* Edit Icon */}
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: 10,
+                    right: 14,
+                    cursor: 'pointer',
+                    fontSize: 18,
+                    color: COLORS.yellow,
+                    zIndex: 2
+                  }}
+                  title="Edit Ticket"
+                  onClick={e => {
+                    e.stopPropagation();
+                    openEditModal(ticket);
+                  }}
+                >✏️</span>
                 <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
                   <span style={{fontWeight: 700, color: COLORS.blue}}>{ticket.ticketName}</span>
                   <span style={styles.badge(ticket.ticketStatus)}>{ticket.ticketStatus}</span>
@@ -536,6 +726,17 @@ const Tickets = () => {
                       {resolving[selectedTicket.ticketId] ? 'Resolving...' : 'Resolve'}
                     </button>
                   )}
+                  {/* Edit Icon */}
+                  <span
+                    style={{
+                      marginLeft: 18,
+                      cursor: 'pointer',
+                      fontSize: 20,
+                      color: COLORS.yellow
+                    }}
+                    title="Edit Ticket"
+                    onClick={() => openEditModal(selectedTicket)}
+                  >✏️</span>
                 </div>
                 <div style={styles.ticketDesc}>{selectedTicket.ticketDescription}</div>
                 <div style={styles.ticketMeta}>
@@ -624,10 +825,28 @@ const Tickets = () => {
                 key={ticket.ticketId}
                 style={{
                   ...styles.ticketCard,
-                  ...(ticket.ticketId === selectedTicketId ? styles.ticketCardActive : {})
+                  ...(ticket.ticketId === selectedTicketId ? styles.ticketCardActive : {}),
+                  position: 'relative'
                 }}
                 onClick={() => setSelectedTicketId(ticket.ticketId)}
               >
+                {/* Edit Icon */}
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: 10,
+                    right: 14,
+                    cursor: 'pointer',
+                    fontSize: 18,
+                    color: COLORS.yellow,
+                    zIndex: 2
+                  }}
+                  title="Edit Ticket"
+                  onClick={e => {
+                    e.stopPropagation();
+                    openEditModal(ticket);
+                  }}
+                >✏️</span>
                 <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
                   <span style={{fontWeight: 700, color: COLORS.blue}}>{ticket.ticketName}</span>
                   <span style={styles.badge(ticket.ticketStatus)}>{ticket.ticketStatus}</span>

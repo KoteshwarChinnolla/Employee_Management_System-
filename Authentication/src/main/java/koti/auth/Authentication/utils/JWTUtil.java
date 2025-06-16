@@ -42,14 +42,18 @@ public class JWTUtil {
         claims.put("username", payload.getUsername());
         claims.put("role",payload.getRole());
 
-        Long employeeId = restClient
-                .get()
-                .uri("http://localhost:8080/employee/employee/getEmployeeId/" + username)
-                .retrieve()
-                .body(Long.class);
+        try{
+            Long employeeId = restClient
+                    .get()
+                    .uri("http://employee:8080/employee/employee/getEmployeeId/" + username)
+                    .retrieve()
+                    .body(Long.class);
+            claims.put("employeeId", employeeId);
+        }catch (Exception e) {
+            // Exception occurred while fetching employeeId, proceed without it
+            throw new RuntimeException("Failed to fetch employeeId for user: " + username, e);
+        }
 
-        claims.put("employeeId", employeeId);
-        
         return Jwts.builder()
                 .setSubject(username)
                 .setClaims(claims)

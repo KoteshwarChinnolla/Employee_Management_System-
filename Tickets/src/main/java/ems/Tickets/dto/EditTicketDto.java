@@ -1,8 +1,8 @@
-package koti.ems.springPostgress.dto;
+package ems.Tickets.dto;
 
 import java.util.List;
 
-import koti.ems.springPostgress.entity.conversationTickets;
+import ems.Tickets.entity.conversationTickets;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,12 +12,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TicketsDto {
+public class EditTicketDto {
     private Long ticketId;
     private String ticketName;
     private String ticketDescription;
     private String ticketStatus;
     private String dateCreated;
     private String dateUpdated;
-    private List<conversationTickets> allConversations;
 }

@@ -23,7 +23,8 @@ services:
   #     retries: 5
 
   employeeapp:
-    image: ems/employee
+    image: koti21/employee
+    container_name: employee
     build:
       context: ./springPostgress
       dockerfile: Dockerfile
@@ -40,7 +41,8 @@ services:
     #     condition: service_healthy
 
   adminapp:
-    image: ems/admin
+    image: koti21/admin
+    container_name: admin
     build:
       context: ./Admin
       dockerfile: Dockerfile
@@ -57,12 +59,31 @@ services:
       - spring_network
 
   authenticationapp:
-    image: ems/auth
+    image: koti21/auth
+    container_name: Authentication
     build:
       context: ./Authentication
       dockerfile: Dockerfile
     ports:
       - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://ems.c3ykgskuuzr8.ap-south-1.rds.amazonaws.com:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ChinnollA21
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
+    networks:
+      - spring_network
+
+  ticketService:
+    image: koti21/ticket
+    container_name: ticket
+    build:
+      context: ./Tickets
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://ems.c3ykgskuuzr8.ap-south-1.rds.amazonaws.com:5432/postgres
       SPRING_DATASOURCE_USERNAME: postgres

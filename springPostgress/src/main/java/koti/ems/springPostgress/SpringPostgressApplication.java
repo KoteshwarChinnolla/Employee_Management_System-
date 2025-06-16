@@ -20,7 +20,8 @@ public class SpringPostgressApplication {
 				registry.addMapping("/employee/**")
 					.allowedOriginPatterns("*") // Allow all origins
 					.allowedMethods("*")
-					.allowedHeaders("*");
+					.allowedHeaders("*")
+					.exposedHeaders("*");
 			}
 		};
 	}

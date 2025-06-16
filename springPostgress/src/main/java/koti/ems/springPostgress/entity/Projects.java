@@ -1,5 +1,8 @@
 package koti.ems.springPostgress.entity;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
@@ -21,6 +24,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Table(name = "projects", schema = "ems")
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "defaultCache")
 public class Projects {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

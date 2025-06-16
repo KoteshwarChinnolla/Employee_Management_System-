@@ -31,7 +31,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        if (!request.getServletPath().equals("/auth/generate-token")) {
+        if (!request.getServletPath().equals("/authenticate/generate-token")) {
             filterChain.doFilter(request, response);
             return;
         }

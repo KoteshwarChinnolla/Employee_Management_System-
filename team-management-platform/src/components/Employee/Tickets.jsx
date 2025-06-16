@@ -366,7 +366,8 @@ const Tickets = () => {
       const name = payload.username.replace(/_/g, ' ').replace(/ /g, '-');
       setEmployeeName(payload.username.replace(/_/g, ' '));
       setEmployeeId(payload.employeeId); // <-- Add this line
-      fetch(`${API_BASE_URLS.EMPLOYEE}/employee/getTicketByNameAll/${encodeURIComponent(name)}`)
+      // Use the correct endpoint to get all tickets with conversations
+      fetch(`${API_BASE_URLS.TICKET}/ticket/getTicketByEmpIdAll?id=${payload.employeeId}`)
         .then(res => res.json())
         .then(data => {
           setTickets(Array.isArray(data) ? data : []);
@@ -414,7 +415,7 @@ const Tickets = () => {
       empConversation: [],
       adminConversation: []
     };
-    await fetch(`${API_BASE_URLS.EMPLOYEE}/employee/addTicket`, {
+    await fetch(`${API_BASE_URLS.TICKET}/ticket/addTicket`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -438,15 +439,14 @@ const Tickets = () => {
       sender: "EMPLOYEE",
       ticket: ticketId
     };
-    await fetch(`${API_BASE_URLS.EMPLOYEE}/employee/addConversation`, {
+    await fetch(`${API_BASE_URLS.TICKET}/ticket/addConversation`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     setChatInputs(inputs => ({ ...inputs, [ticketId]: '' }));
     setChatLoading(l => ({ ...l, [ticketId]: false }));
-    // Remove setLoading(true) and ticket reload here to avoid UI blinking
-    // Instead, optimistically update the conversation in UI:
+    // Optimistically update UI
     setTickets(prevTickets => prevTickets.map(t =>
       t.ticketId === ticketId
         ? {
@@ -463,11 +463,13 @@ const Tickets = () => {
           }
         : t
     ));
-    // Optionally, you can refresh tickets in the background (not blocking UI)
-    fetch(`${API_BASE_URLS.EMPLOYEE}/employee/getTicketByNameAll/${encodeURIComponent(employeeName.replace(/ /g, '-'))}`)
+    // Refresh tickets in the background using the correct endpoint and employeeId
+    const empId = employeeId || JSON.parse(localStorage.getItem('jwt_payload'))?.employeeId;
+    fetch(`${API_BASE_URLS.TICKET}/ticket/getTicketByEmpIdAll?id=${empId}`)
       .then(res => res.json())
       .then(data => {
         setTickets(Array.isArray(data) ? data : []);
+        // console.log('Tickets updated after sending message:', data);
       })
       .catch(() => {});
   };
@@ -684,7 +686,7 @@ const Tickets = () => {
                   flex: 1
                 }}
               >
-                {selectedTicket.allConversations
+                {(selectedTicket.allConversations || [])
                   .slice()
                   .sort((a, b) => new Date(a.date) - new Date(b.date))
                   .map((conv, idx) => (

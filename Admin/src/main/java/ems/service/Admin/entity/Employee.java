@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -47,6 +50,7 @@ import lombok.Setter;
         @Index(name = "employee_phone_number_Email", columnList = "phone_number, email")
     }
 )
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "defaultCache")
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "employee_seq2")
@@ -145,10 +149,6 @@ public class Employee {
         }
         return Collections.emptyList();
     }
-
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Tickets> tickets;
     
     public EmployeeDto toDto() {
         EmployeeTeam CurrentEmployeeTeam = employeeTeams.size() > 0 ? employeeTeams.get(0) : null;

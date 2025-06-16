@@ -2,6 +2,27 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Spring Boot-TicketsApplication<Tickets>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "ems.Tickets.TicketsApplication",
+            "projectName": "Tickets",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-SpringPostgressApplication<springPostgress>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "koti.ems.springPostgress.SpringPostgressApplication",
+            "projectName": "springPostgress",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=60030 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=springPostgress"
+        },
+        {
+            "type": "java",
             "name": "Spring Boot-AdminApplication<Admin>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
@@ -17,26 +38,6 @@
             "cwd": "${workspaceFolder}",
             "mainClass": "koti.auth.Authentication.AuthenticationApplication",
             "projectName": "Authentication",
-            "args": "",
-            "envFile": "${workspaceFolder}/.env"
-        },
-        {
-            "type": "java",
-            "name": "Spring Boot-SpringPostgressApplication<springPostgress>",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "mainClass": "koti.ems.springPostgress.SpringPostgressApplication",
-            "projectName": "springPostgress",
-            "args": "",
-            "envFile": "${workspaceFolder}/.env"
-        },
-        {
-            "type": "java",
-            "name": "Spring Boot-TicketsApplication<Tickets>",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "mainClass": "ems.Tickets.TicketsApplication",
-            "projectName": "Tickets",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
         }

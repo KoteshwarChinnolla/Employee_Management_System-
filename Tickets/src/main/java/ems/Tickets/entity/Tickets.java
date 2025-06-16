@@ -7,10 +7,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.cglib.core.Local;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.Cache;
+
 
 @Getter
 @Setter
@@ -18,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @NoArgsConstructor
 @Entity
 @Table(name = "tickets", schema = "ems")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "defaultCache")
 public class Tickets {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

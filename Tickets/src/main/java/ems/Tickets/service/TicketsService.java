@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import ems.Tickets.repository.conversation;
 import ems.Tickets.dto.AddConvDto;
 import ems.Tickets.dto.AddTicketDto;
+import ems.Tickets.dto.EditTicketDto;
+import ems.Tickets.dto.TicketsDto;
 import ems.Tickets.entity.Tickets;
 import ems.Tickets.entity.conversationTickets;
 import ems.Tickets.repository.TicketRepo;
@@ -53,6 +55,19 @@ public class TicketsService {
 
         return ticket1;
     }
+
+        public Tickets editTicket(EditTicketDto ticket) {
+            Tickets existingTicket = ticketRepo.findById(ticket.getTicketId()).orElse(null);
+            if (existingTicket == null) {
+                throw new IllegalArgumentException("Ticket with given ID does not exist");
+            }
+            existingTicket.setTicketName(ticket.getTicketName());
+            existingTicket.setTicketDescription(ticket.getTicketDescription());
+            existingTicket.setTicketStatus(ticket.getTicketStatus());
+            existingTicket.setDateCreated(ticket.getDateCreated());
+            existingTicket.setDataUpdated(ticket.getDateUpdated());
+            return ticketRepo.save(existingTicket);
+        }
 
     public Tickets getTicket(Long id) {
         return ticketRepo.findById(id).orElse(null);

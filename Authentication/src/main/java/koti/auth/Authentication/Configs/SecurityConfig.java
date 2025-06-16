@@ -68,12 +68,22 @@ public class SecurityConfig {
         JWTRefreshFilter jwtRefreshFilter = new JWTRefreshFilter(jwtUtil, authenticationManager);
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/register").permitAll()
-                .requestMatchers("/swagger-ui/index.html").permitAll()
+                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .cors(cors -> cors.configurationSource(request -> {
+                CorsConfiguration config = new CorsConfiguration();
+                config.addAllowedOriginPattern("*"); // Allow all origins
+                config.addAllowedMethod("*"); // Allow all methods
+                config.addAllowedHeader("*"); // Allow all headers
+                config.setExposedHeaders(Arrays.asList("Authorization", "Refresh-Token"));
+                config.setAllowCredentials(true); // Allow credentials
+                return config;
+            }))
 
             .csrf(csrf -> csrf.disable())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

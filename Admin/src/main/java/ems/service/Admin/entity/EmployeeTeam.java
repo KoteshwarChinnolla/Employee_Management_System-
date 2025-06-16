@@ -3,6 +3,9 @@ import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -35,7 +38,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Table(name= "employee_team", schema = "ems")
 @Entity
-
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "defaultCache")
 public class EmployeeTeam {
     @Id
     // @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ems.Tickets.dto.AddConvDto;
 import ems.Tickets.dto.AddTicketDto;
+import ems.Tickets.dto.EditTicketDto;
 import ems.Tickets.dto.TicketsDto;
 import ems.Tickets.entity.Tickets;
 import ems.Tickets.service.TicketsService;
@@ -53,22 +54,11 @@ public class TicketControler {
         
         return "Ticket saved with ID: " + savedTicket.getId();
     }
-    // @GetMapping("/getTicketByEnpName/{name}")
-    // public List<Tickets> getTicketByEmpId(@PathVariable String name) {
-    //     name = name.replace("-", " ");
-    //     Long id = EmployeeService.getEmployeeByName(name).getId();
-    //     return ticketService.getTicketsByEmployee(id);
-    // }
-
-    // @GetMapping("/getTicketByNameAll/{name}")
-    // public List<TicketsDto> getTicketByEnpIdAll(@PathVariable String name) {
-    //     name = name.replace("-", " ");
-    //     Long id = EmployeeService.getEmployeeByName(name).getId();
-    //     return ticketService.getTicketsByEmployee(id)
-    //             .stream()
-    //             .map(ticket -> ticket.toDto())
-    //             .toList();
-    // }
+    @PostMapping("/editTicket")
+    public String editTicket(@RequestBody EditTicketDto entity) {
+        Tickets updatedTicket = ticketService.editTicket(entity);
+        return "Ticket updated with ID: " + updatedTicket.getId();
+    }
 
 
     @GetMapping("/getTicketByEmpId")

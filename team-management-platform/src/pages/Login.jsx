@@ -102,7 +102,7 @@ const Login = () => {
         try {
             if (loginType === 'employee') {
                 // Use AUTH service for JWT
-                const response = await fetch(`${API_BASE_URLS.AUTH}/generate-token`, {
+                const response = await fetch(`${API_BASE_URLS.AUTH}/authenticate/generate-token`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username: employeeId, password })
