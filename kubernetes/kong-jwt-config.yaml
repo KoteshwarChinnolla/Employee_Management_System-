@@ -1,0 +1,35 @@
+
+
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: jwt-plugin
+  namespace: ems
+plugin: jwt
+config:
+  key-name: Authorization
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jwt-secret
+  namespace: ems
+  labels:
+    konghq.com/credential: jwt
+stringData:
+  algorithm: HS256
+  secret: "JWT_FOR_EMPLOYEE_MANAGEMENT_SYSTEM_!@#$%^&*()"
+
+---
+
+apiVersion: configuration.konghq.com/v1
+kind: KongConsumer
+metadata:
+  name: koti
+  annotations:
+    kubernetes.io/ingress.class: kong
+username: koti
+credentials:
+- jwt-secret

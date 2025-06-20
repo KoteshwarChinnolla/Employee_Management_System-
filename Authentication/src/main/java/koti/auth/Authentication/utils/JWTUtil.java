@@ -45,13 +45,11 @@ public class JWTUtil {
         try{
             Long employeeId = restClient
                     .get()
-                    .uri("http://employee:8080/employee/employee/getEmployeeId/" + username)
+                    .uri("http://employee-service/employee/employee/getEmployeeId/" + username)
                     .retrieve()
                     .body(Long.class);
             claims.put("employeeId", employeeId);
         }catch (Exception e) {
-            // Exception occurred while fetching employeeId, proceed without it
-            throw new RuntimeException("Failed to fetch employeeId for user: " + username, e);
         }
 
         return Jwts.builder()
