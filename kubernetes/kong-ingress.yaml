@@ -5,7 +5,7 @@ metadata:
  namespace: ems
  annotations:
    konghq.com/strip-path: "false"
-  #  konghq.com/plugins: jwt-plugin   # Plugin names referenced in KongPlugin resources
+   konghq.com/plugins: jwt-plugin   # Plugin names referenced in KongPlugin resources
    kubernetes.io/ingress.class: kong
    konghq.com/methods: "GET, POST"
 spec:
